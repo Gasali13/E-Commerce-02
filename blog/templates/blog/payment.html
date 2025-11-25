@@ -1,0 +1,263 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="{% static 'blog/content.css' %}?v=2.0">
+    <title>Checkout - Threeofkind.supply</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="/">
+                    <img src="{% static 'blog/pict/logo.png'%}?v=2.0" class="logo-image">
+                </a>
+            </div>
+            <nav class="nav">
+                <a href="/">Kembali ke Toko</a>
+            </nav>
+            <div class="header-right">
+                <span class="secure-checkout">
+                    <i data-feather="lock"></i>
+                    Secure Checkout
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content checkout-page">
+        <div class="checkout-container">
+            
+            <div class="checkout-details">
+                <form id="checkout-form" action="/proses-pembayaran/" method="POST">
+                    {% csrf_token %}
+                    
+                    <input type="hidden" name="cart_data" id="cart-data-input" value="">
+                    
+                    <section class="checkout-section">
+                        <h2><i data-feather="map-pin" style="width: 24px; height: 24px; margin-right: 8px;"></i>Alamat Pengiriman</h2>
+                        <div class="form-group">
+                            <label for="full-name">Nama Lengkap</label>
+                            <input type="text" id="full-name" name="full_name" class="form-input" placeholder="Nama lengkap Anda" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Alamat Lengkap</label>
+                            <input type="text" id="address" name="address" class="form-input" placeholder="Jl. Merdeka No. 17" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">Kota</label>
+                                <input type="text" id="city" name="city" class="form-input" placeholder="Surabaya" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="postal-code">Kode Pos</label>
+                                <input type="text" id="postal-code" name="postal_code" class="form-input" placeholder="60123" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Nomor Telepon</label>
+                            <input type="tel" id="phone" name="phone" class="form-input" placeholder="0812-3456-7890" required>
+                        </div>
+                    </section>
+                    
+                    <section class="checkout-section">
+                        <h2><i data-feather="credit-card" style="width: 24px; height: 24px; margin-right: 8px;"></i>Metode Pembayaran</h2>
+                        <div class="payment-options">
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="qris" checked>
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="3" width="8" height="8" rx="1"/>
+                                    <rect x="13" y="3" width="8" height="8" rx="1"/>
+                                    <rect x="3" y="13" width="8" height="8" rx="1"/>
+                                    <rect x="13" y="13" width="8" height="8" rx="1"/>
+                                    <circle cx="7" cy="7" r="1" fill="currentColor"/>
+                                    <circle cx="17" cy="7" r="1" fill="currentColor"/>
+                                    <circle cx="7" cy="17" r="1" fill="currentColor"/>
+                                    <circle cx="17" cy="17" r="1" fill="currentColor"/>
+                                </svg>
+                                <span>QRIS (Semua E-Wallet)</span>
+                            </label>
+                            
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="credit_card">
+                                <i data-feather="credit-card"></i>
+                                <span>Kartu Kredit/Debit</span>
+                            </label>
+                            
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="bank_transfer">
+                                <i data-feather="dollar-sign"></i>
+                                <span>Transfer Bank (Virtual Account)</span>
+                            </label>
+                            
+                            <label class="payment-option">
+                                <input type="radio" name="payment_method" value="e_wallet">
+                                <i data-feather="smartphone"></i>
+                                <span>E-Wallet (OVO/GoPay/Dana)</span>
+                            </label>
+                        </div>
+                    </section>
+                    
+                </form>
+            </div>
+            
+            <aside class="order-summary">
+                <h2>Ringkasan Pesanan</h2>
+                
+                <div class="summary-item-list" id="payment-summary-items">
+                    <p style="text-align: center; color: #64748b;">Memuat keranjang...</p>
+                </div>
+                
+                <div class="summary-total" id="payment-summary-total">
+                    <div class="total-row total-row-final">
+                        <strong>Total Pembayaran</strong>
+                        <strong>IDR 0</strong>
+                    </div>
+                </div>
+                
+                <button type="submit" form="checkout-form" class="btn btn-primary btn-full">
+                    <i data-feather="check-circle"></i>
+                    Bayar Sekarang
+                </button>
+                
+                <p style="text-align: center; color: #64748b; font-size: 0.85rem; margin-top: 1rem;">
+                    <i data-feather="shield" style="width: 14px; height: 14px;"></i>
+                    Pembayaran Anda dilindungi dengan enkripsi SSL
+                </p>
+            </aside>
+
+        </div>
+    </main>
+
+    {% include 'blog/footer.html' %}
+
+    <script src="{% static 'blog/lund.js' %}?v=2.0"></script>
+    
+    <script>
+        console.log('💳 [PAYMENT PAGE] Script loaded');
+        
+        // ✅ PAKAI KEY YANG SAMA: 'cart'
+        var paymentCart = JSON.parse(localStorage.getItem('cart')) || [];
+        console.log('💳 [PAYMENT] Cart from localStorage:', paymentCart);
+        
+        function formatCurrency(amount) {
+            return 'IDR ' + amount.toLocaleString('id-ID');
+        }
+        
+        function renderPaymentSummary() {
+            console.log('💳 [PAYMENT] Rendering summary...');
+            
+            const itemsContainer = document.getElementById('payment-summary-items');
+            const totalContainer = document.getElementById('payment-summary-total');
+            
+            if (!itemsContainer || !totalContainer) {
+                console.error('💳 [PAYMENT] Container not found!');
+                return;
+            }
+            
+            if (paymentCart.length === 0) {
+                console.log('💳 [PAYMENT] Cart is empty');
+                itemsContainer.innerHTML = "<p style='text-align: center; color: #64748b;'>Keranjang kosong.</p>";
+                document.querySelector('button[form="checkout-form"]').disabled = true;
+                return;
+            }
+            
+            console.log('💳 [PAYMENT] Rendering', paymentCart.length, 'items');
+            
+            let itemsHTML = '';
+            let subtotal = 0;
+            
+            paymentCart.forEach(item => {
+                const itemSubtotal = item.price * item.quantity;
+                subtotal += itemSubtotal;
+                
+                itemsHTML += `
+                    <div class="summary-item">
+                        <img src="${item.image}" alt="${item.name}" class="summary-item-img">
+                        <div class="summary-item-info">
+                            <span class="summary-item-name">${item.name}</span>
+                            <span class="summary-item-qty">Qty: ${item.quantity}</span>
+                        </div>
+                        <span class="summary-item-price">${formatCurrency(itemSubtotal)}</span>
+                    </div>
+                `;
+            });
+            
+            itemsContainer.innerHTML = itemsHTML;
+            
+            const shipping = 10000;
+            const total = subtotal + shipping;
+            
+            totalContainer.innerHTML = `
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <span>${formatCurrency(subtotal)}</span>
+                </div>
+                <div class="total-row">
+                    <span>Pengiriman</span>
+                    <span>${formatCurrency(shipping)}</span>
+                </div>
+                <div class="total-row total-row-final">
+                    <strong>Total Pembayaran</strong>
+                    <strong>${formatCurrency(total)}</strong>
+                </div>
+            `;
+            
+            console.log('💳 [PAYMENT] Summary rendered successfully');
+        }
+        
+        function prepareCartData() {
+            const cartData = {};
+            
+            paymentCart.forEach(item => {
+                cartData[item.productId] = {
+                    'name': item.name,
+                    'price': item.price,
+                    'quantity': item.quantity,
+                    'image': item.image
+                };
+            });
+            
+            const cartInput = document.getElementById('cart-data-input');
+            if (cartInput) {
+                cartInput.value = JSON.stringify(cartData);
+                console.log('💳 [PAYMENT] Cart data prepared:', cartData);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('💳 [PAYMENT] DOM ready');
+            
+            renderPaymentSummary();
+            prepareCartData();
+            
+            const checkoutForm = document.getElementById('checkout-form');
+            if (checkoutForm) {
+                checkoutForm.addEventListener('submit', function(e) {
+                    console.log('💳 [PAYMENT] Form submitting');
+                    prepareCartData();
+                    
+                    const cartInput = document.getElementById('cart-data-input');
+                    console.log('💳 [PAYMENT] Final cart_data:', cartInput.value);
+                    
+                    if (!cartInput.value || cartInput.value === '{}') {
+                        e.preventDefault();
+                        alert('Keranjang kosong!');
+                        window.location.href = '/products/';
+                        return false;
+                    }
+                });
+            }
+            
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+            
+            console.log('💳 [PAYMENT] Initialization complete');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="{% static 'blog/content.css' %}?v=2.0">
+    <title>Login - Threeofkind.supply</title>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="/">
+                    <img src="{% static 'blog/pict/logo.png'%}?v=2.0" class="logo-image">
+                </a>
+            </div>
+            
+            <nav class="nav">
+                <a href="/">Home</a>
+                <a href="/products/">Product</a>
+                <a href="/about/">About Us</a>
+                <a href="/contact/">Contact</a>
+            </nav>
+            
+            <div class="header-right">
+                <a href="/cart/" class="cart-btn">
+                    <i data-feather="shopping-cart"></i>
+                    <span class="cart-badge" id="cart-badge-header">0</span> 
+                </a>
+                <a href="#wishlist" class="cart-btn" id="wishlist-btn">
+                    <i data-feather="heart"></i>
+                </a>
+                <a href="/payment/" class="cart-btn" id="payment-btn">
+                    <i data-feather="credit-card"></i>
+                </a>
+                
+                {% if request.user.is_authenticated %}
+                    <a href="/profile/" class="cart-btn" id="user-btn" title="Profile">
+                        <i data-feather="user"></i>
+                        <span style="margin-left: 8px; font-weight: 500;">Hi, {{ request.user.username }}</span>
+                    </a>
+                {% else %}
+                    <a href="/login/" class="cart-btn" id="user-btn" title="Login/Register">
+                        <i data-feather="user"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content auth-page">
+        <div class="login-container">
+            <div class="auth-form">
+                <h2>Login ke Akun Anda</h2>
+                <p>Selamat datang kembali!</p>
+
+                {% if error %}
+                    <div style="padding: 12px; border-radius: 8px; margin-bottom: 1rem; background: #fee2e2; color: #dc2626; border: 1px solid #fecaca;">
+                        {{ error }}
+                    </div>
+                {% endif %}
+                
+                {% if success %}
+                    <div style="padding: 12px; border-radius: 8px; margin-bottom: 1rem; background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0;">
+                        {{ success }}
+                    </div>
+                {% endif %}
+
+                <form id="loginForm" method="POST">
+                    {% csrf_token %}
+                    
+                    <div class="form-group">
+                        <label for="login-username">Username atau Email</label>
+                        <div class="input-wrapper">
+                            <i data-feather="user"></i>
+                            <input type="text" id="login-username" name="username" class="form-input" placeholder="Username atau Email Anda" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <div class="input-wrapper">
+                            <i data-feather="lock"></i>
+                            <input type="password" id="login-password" name="password" class="form-input" placeholder="Password" required>
+                        </div>
+                        <a href="/password-reset/" class="form-link">Lupa Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i data-feather="log-in"></i>
+                        Login
+                    </button>
+                </form>
+                
+                <p class="auth-toggle">
+                    Belum punya akun? <a href="/register/">Daftar di sini</a>
+                </p>
+            </div>
+        </div>
+    </main>
+
+    {% include 'blog/footer.html' %}
+
+    <script src="{% static 'blog/lund.js' %}?v=2.0"></script>
+    <script>
+        feather.replace();
+    </script>
+</body>
+</html>
