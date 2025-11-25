@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+import dj_database_url # Library untuk koneksi ke Postgres Vercel
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -67,15 +68,29 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # ========================================
-# DATABASE
+# DATABASE CONFIGURATION (SQLite vs Postgres)
 # ========================================
-# Catatan: SQLite di Vercel datanya akan RESET setiap redeploy.
+
+# 1. Konfigurasi Default: SQLite (Untuk di Laptop/Localhost)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# 2. Cek apakah ada URL Database dari Vercel?
+# Tadi kita set prefix-nya 'POSTGRES', jadi Vercel bikin variabel 'POSTGRES_URL'
+database_url_config = os.environ.get('POSTGRES_URL') or os.environ.get('DATABASE_URL')
+
+# 3. Kalau URL ditemukan (artinya project sedang jalan di Vercel), pakai Postgres!
+if database_url_config:
+    # Fix bug kecil: kadang Vercel kasih 'postgres://' tapi Django maunya 'postgresql://'
+    if database_url_config.startswith("postgres://"):
+        database_url_config = database_url_config.replace("postgres://", "postgresql://", 1)
+    
+    # Timpa settingan SQLite dengan Postgres
+    DATABASES['default'] = dj_database_url.parse(database_url_config)
 
 
 # ========================================
@@ -108,12 +123,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Penting agar CSS ter-compress dan jalan di Vercel
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
-# [PENTING] BARIS INI YANG MENGATASI ERROR 404 DI VERCEL
-# Ini memaksa Whitenoise mencari file di folder 'static/' jika 'staticfiles/' kosong
+# [PENTING] Memaksa Whitenoise mencari file di folder 'static/' jika 'staticfiles/' kosong
 WHITENOISE_USE_FINDERS = True
 
-# Media Files (Upload User)
-# Ingat: Di Vercel file media akan hilang sendiri (ephemeral) kecuali pakai Cloudinary/S3
+# Media Files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -152,7 +165,7 @@ EMAIL_HOST_USER = 'threeofkind1@gmail.com'
 DEFAULT_FROM_EMAIL = 'Threeofkind.supply <threeofkind1@gmail.com>'
 ADMIN_EMAIL = 'threeofkind1@gmail.com'
 
-# PASSWORD DIAMBIL DARI ENVIRONMENT VARIABLE (Agar aman di GitHub)
+# PASSWORD DIAMBIL DARI ENVIRONMENT VARIABLE
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') 
 
 PASSWORD_RESET_TIMEOUT = 86400
