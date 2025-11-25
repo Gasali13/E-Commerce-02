@@ -108,6 +108,10 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Penting agar CSS ter-compress dan jalan di Vercel
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 
+# [PENTING] BARIS INI YANG MENGATASI ERROR 404 DI VERCEL
+# Ini memaksa Whitenoise mencari file di folder 'static/' jika 'staticfiles/' kosong
+WHITENOISE_USE_FINDERS = True
+
 # Media Files (Upload User)
 # Ingat: Di Vercel file media akan hilang sendiri (ephemeral) kecuali pakai Cloudinary/S3
 MEDIA_URL = '/media/'
@@ -149,8 +153,6 @@ DEFAULT_FROM_EMAIL = 'Threeofkind.supply <threeofkind1@gmail.com>'
 ADMIN_EMAIL = 'threeofkind1@gmail.com'
 
 # PASSWORD DIAMBIL DARI ENVIRONMENT VARIABLE (Agar aman di GitHub)
-# Nanti di Vercel masuk ke Settings > Environment Variables,
-# Key: EMAIL_HOST_PASSWORD, Value: (isi password 16 digit kamu)
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') 
 
 PASSWORD_RESET_TIMEOUT = 86400
@@ -162,9 +164,5 @@ PASSWORD_RESET_TIMEOUT = 86400
 MIDTRANS_IS_PRODUCTION = True
 
 # KEY DIAMBIL DARI ENVIRONMENT VARIABLE
-# Nanti di Vercel setting:
-# Key: MIDTRANS_SERVER_KEY, Value: Mid-server-xxxx...
-# Key: MIDTRANS_CLIENT_KEY, Value: Mid-client-xxxx...
-
 MIDTRANS_SERVER_KEY = os.environ.get('MIDTRANS_SERVER_KEY')
 MIDTRANS_CLIENT_KEY = os.environ.get('MIDTRANS_CLIENT_KEY')
