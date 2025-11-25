@@ -23,6 +23,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.vercel.app']
 # ========================================
 
 INSTALLED_APPS = [
+    # Apps Bawaan & Pihak Ketiga
     'unfold',
     'unfold.contrib.filters', 
     'unfold.contrib.forms',
@@ -31,7 +32,13 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    
+    # [PENTING] Cloudinary harus ditaruh SEBELUM 'django.contrib.staticfiles'
+    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary', # Library Cloudinary
+
+    # App Kamu
     'blog.apps.BlogConfig',
 ]
 
@@ -80,16 +87,13 @@ DATABASES = {
 }
 
 # 2. Cek apakah ada URL Database dari Vercel?
-# Tadi kita set prefix-nya 'POSTGRES', jadi Vercel bikin variabel 'POSTGRES_URL'
 database_url_config = os.environ.get('POSTGRES_URL') or os.environ.get('DATABASE_URL')
 
 # 3. Kalau URL ditemukan (artinya project sedang jalan di Vercel), pakai Postgres!
 if database_url_config:
-    # Fix bug kecil: kadang Vercel kasih 'postgres://' tapi Django maunya 'postgresql://'
     if database_url_config.startswith("postgres://"):
         database_url_config = database_url_config.replace("postgres://", "postgresql://", 1)
     
-    # Timpa settingan SQLite dengan Postgres
     DATABASES['default'] = dj_database_url.parse(database_url_config)
 
 
@@ -114,19 +118,29 @@ USE_TZ = True
 
 
 # ========================================
-# STATIC FILES (CSS, JS, IMAGES)
+# STATIC FILES (CSS, JS) - Pakai Whitenoise
 # ========================================
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Penting agar CSS ter-compress dan jalan di Vercel
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-# [PENTING] Memaksa Whitenoise mencari file di folder 'static/' jika 'staticfiles/' kosong
 WHITENOISE_USE_FINDERS = True
 
-# Media Files
+
+# ========================================
+# MEDIA FILES (GAMBAR) - Pakai Cloudinary
+# ========================================
+# Konfigurasi ini mengambil kunci dari Environment Variables Vercel
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
+
+# Menyuruh Django menggunakan Cloudinary untuk penyimpanan file Media
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
