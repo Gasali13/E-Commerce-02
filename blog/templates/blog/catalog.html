@@ -113,9 +113,9 @@
             <div class="products-grid">
                 {% for product in products %}
                 <div class="product-card" 
-                     data-product-id="{{ product.id }}" 
-                     onclick="openProductModal('{{ product.id }}')" 
-                     style="cursor: pointer;">
+                    data-product-id="{{ product.id }}" 
+                    onclick="openProductModal('{{ product.id }}', '{{ product.image.url }}')"
+                    style="cursor: pointer;">
                     
                     <div class="product-image">
                         {% if product.image %}

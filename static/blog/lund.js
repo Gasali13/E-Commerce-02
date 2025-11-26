@@ -648,14 +648,20 @@ function initializeProductCards() {
 }
 
 // Open product modal
-function openProductModal(productId) {
+function openProductModal(productId, imageUrl) { 
     console.log('[MODAL] Opening modal for product:', productId);
     
     const product = productsData[productId];
-    if (!product) {
-        console.error('Product not found:', productId);
-        return;
-    }
+if (!product) {
+    console.error('Product not found:', productId);
+    return;
+}
+
+if (imageUrl) {
+    product.image = imageUrl;
+}
+
+document.getElementById('modalImage').src = product.image;
 
     document.getElementById('modalImage').src = product.image; 
     document.getElementById('modalImage').alt = product.name;
