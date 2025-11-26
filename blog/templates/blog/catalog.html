@@ -5,24 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/feather-icons"></script>
-    <link rel="stylesheet" href="{% static 'blog/content.css' %}?v=2.1">
+    <link rel="stylesheet" href="{% static 'blog/content.css' %}?v=2.2">
     <title>Threeofkind.supply - Artistry in Every Detail</title>
     
     <style>
-        html {
-            scroll-behavior: smooth;
+        html { scroll-behavior: smooth; }
+        .modal-stock, #modalStock, .stock-status, .stock-info, .stock-count {
+            display: none !important; visibility: hidden !important; height: 0 !important;
+            overflow: hidden !important; opacity: 0 !important;
         }
-        
-        .modal-stock,
-        #modalStock,
-        .stock-status,
-        .stock-info,
-        .stock-count {
-            display: none !important;
-            visibility: hidden !important;
-            height: 0 !important;
-            overflow: hidden !important;
-            opacity: 0 !important;
+        /* Style tambahan untuk handling gambar kosong */
+        .product-image img {
+            width: 100%; height: 100%; object-fit: cover;
         }
     </style>
 </head>
@@ -36,7 +30,7 @@
             </div>
             
             <nav class="nav">
-                <a href="javascript:void(0)" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth',block:'start'})">Home</a>
+                <a href="javascript:void(0)" onclick="window.location.href='/'">Home</a>
                 <a href="javascript:void(0)" onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth',block:'start'})">Product</a>
                 <a href="javascript:void(0)" onclick="document.getElementById('about-section').scrollIntoView({behavior:'smooth',block:'start'})">About Us</a>
                 <a href="/contact/">Contact</a>
@@ -80,8 +74,7 @@
                      Temukan perpaduan tren kekinian dan gaya klasik yang elegan di sini.
                 </p>
             </div>
-            <div class="hero-image">
-            </div>
+            <div class="hero-image"></div>
         </div>
     </section>
 
@@ -100,98 +93,65 @@
     <div class="main-content" id="catalog">
         <main class="content">
             <div class="content-header">
-                <h2>Featured Products (4)</h2>
+                <h2>Featured Products ({{ product_count }})</h2>
                 
                 <div class="view-controls">
                     <div class="view-toggle">
-                        <button class="view-btn active">
-                            <i data-feather="grid"></i>
-                        </button>
-                        <button class="view-btn">
-                            <i data-feather="list"></i>
-                        </button>
+                        <button class="view-btn active"><i data-feather="grid"></i></button>
+                        <button class="view-btn"><i data-feather="list"></i></button>
                     </div>
                     
-                    <select class="sort-select">
-                        <option>Sort by: Relevance</option>
-                        <option>Price: Low to High</option>
-                        <option>Price: High to Low</option>
-                        <option>Newest</option>
+                    <select class="sort-select" onchange="location = this.value;">
+                        <option value="?sort=relevance" {% if current_sort == 'relevance' %}selected{% endif %}>Sort by: Relevance</option>
+                        <option value="?sort=price_low" {% if current_sort == 'price_low' %}selected{% endif %}>Price: Low to High</option>
+                        <option value="?sort=price_high" {% if current_sort == 'price_high' %}selected{% endif %}>Price: High to Low</option>
+                        <option value="?sort=newest" {% if current_sort == 'newest' %}selected{% endif %}>Newest</option>
                     </select>
                 </div>
             </div>
 
             <div class="products-grid">
-                <div class="product-card" data-product-id="1" onclick="openProductModal('1')" style="cursor: pointer;">
+                {% for product in products %}
+                <div class="product-card" 
+                     data-product-id="{{ product.id }}" 
+                     onclick="openProductModal('{{ product.id }}')" 
+                     style="cursor: pointer;">
+                    
                     <div class="product-image">
-                        <img src="{% static 'blog/pict/bracelet 1.jpg'%}" alt="Gelang Titanium Steel Anti Karat" />
-                        <span class="product-badge badge-discount">-42%</span>
-                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this);">
-                            <i data-feather="heart"></i>
-                        </button>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Gelang Titanium Steel Anti Karat Klavikula Multi Layers Hias Permata Hitam Unisex</h3>
-                        <div class="product-price">
-                            <span class="current-price">IDR 35.000</span>
-                            <span class="original-price">IDR 60.000</span>
-                        </div>
-                    </div>
-                </div>
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+                        {% else %}
+                            <img src="https://via.placeholder.com/300x300?text=No+Image" alt="No Image" />
+                        {% endif %}
 
-                <div class="product-card" data-product-id="2" onclick="openProductModal('2')" style="cursor: pointer;">
-                    <div class="product-image">
-                        <img src="{% static 'blog/pict/bracelet 2.jpg'%}" alt= "Gelang Aesthetic Korean Style" />
-                        <span class="product-badge badge-new">NEW</span>
-                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this);">
-                            <i data-feather="heart"></i>
-                        </button>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Gelang Aesthetic Korean Style Unisex Stylish pria wanita titanium</h3>
-                        <div class="product-price">
-                            <span class="current-price">IDR 30.000</span>
-                        </div>
-                    </div>
-                </div>
+                        {% if product.stock < 5 and product.stock > 0 %}
+                            <span class="product-badge badge-discount">Low Stock</span>
+                        {% elif product.price < 50000 %}
+                            <span class="product-badge badge-discount">Best Deal</span>
+                        {% endif %}
 
-                <div class="product-card" data-product-id="3" onclick="openProductModal('3')" style="cursor: pointer;">
-                    <div class="product-image">
-                        <img src="{% static 'blog/pict/necklace 1.jpg'%}" alt="Kalung Fashion Wanita" />
-                        <span class="product-badge badge-discount">-18%</span>
                         <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this);">
                             <i data-feather="heart"></i>
                         </button>
                     </div>
+                    
                     <div class="product-info">
-                        <h3 class="product-name">Kalung Titanium Star boy Liontin Bintang Stainless Steel Anti Karat</h3>
+                        <h3 class="product-name">{{ product.name }}</h3>
                         <div class="product-price">
-                            <span class="current-price">IDR 45.000</span>
-                            <span class="original-price">IDR 55.000</span>
+                            <span class="current-price">IDR {{ product.price|floatformat:0 }}</span>
                         </div>
                     </div>
                 </div>
-
-                <div class="product-card" data-product-id="4" onclick="openProductModal('4')" style="cursor: pointer;">
-                    <div class="product-image">
-                        <img src="{% static 'blog/pict/necklace 2.jpg'%}" alt="Kalung Fashion Premium" />
-                        <span class="product-badge badge-discount">-43%</span>
-                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this);">
-                            <i data-feather="heart"></i>
-                        </button>
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-name">Kalung Titanium Rantai Rolo Liontin Bulan Bintang Anti Karat</h3>
-                        <div class="product-price">
-                            <span class="current-price">IDR 40.000</span>
-                            <span class="original-price">IDR 70.000</span>
-                        </div>
-                    </div>
+                {% empty %}
+                <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                    <h3>Belum ada produk yang tersedia saat ini.</h3>
+                    <p>Silakan cek kembali nanti atau hubungi admin.</p>
                 </div>
-            </div>
+                {% endfor %}
+                </div>
 
             <div style="text-align: center; margin-top: 3rem;">
-                <a href="/products/" class="btn btn-primary" style="display: inline-flex; padding: 14px 32px; text-decoration: none; font-size: 1.05rem;">
+                <a href="javascript:void(0)" class="btn btn-primary" style="display: inline-flex; padding: 14px 32px; text-decoration: none; font-size: 1.05rem;">
                     <i data-feather="shopping-bag"></i>
                     Lihat Semua Produk
                 </a>
@@ -199,12 +159,9 @@
         </main>
     </div>
 
-    <!-- Product Modal -->
     <div class="modal-overlay" id="productModal" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <button class="modal-close" onclick="closeModal()">
-                <i data-feather="x"></i>
-            </button>
+            <button class="modal-close" onclick="closeModal()"><i data-feather="x"></i></button>
             
             <div class="modal-body">
                 <div class="modal-image">
@@ -219,38 +176,36 @@
                         <span class="original-price" id="modalOriginalPrice"></span>
                     </div>
                     
-                    <div class="modal-stock" style="display: none !important; visibility: hidden !important; height: 0 !important;">
-                        <span class="stock-status" id="modalStock" style="display: none !important;"></span>
-                    </div>
-                    
                     <div class="modal-tabs">
                         <button class="modal-tab-btn active" data-tab="description">Deskripsi</button>
                         <button class="modal-tab-btn" data-tab="features">Fitur</button>
                     </div>
                     
                     <div class="modal-tab-content active" id="tab-description">
-                        <p id="modalDescription"></p>
+                        <p id="modalDescription">Deskripsi produk detail akan muncul di sini.</p>
                     </div>
                     
                     <div class="modal-tab-content" id="tab-features">
-                        <ul id="modalFeatures"></ul>
+                        <ul id="modalFeatures">
+                            <li>Bahan Titanium Anti Karat</li>
+                            <li>Aman untuk kulit sensitif</li>
+                            <li>Design Eksklusif</li>
+                        </ul>
                     </div>
 
                     <div class="modal-actions">
                         <div class="quantity-selector">
                             <button onclick="decreaseQuantity()">-</button>
-                            <input type="number" id="quantityInput" value="1" min="1" max="9999" />
+                            <input type="number" id="quantityInput" value="1" min="1" max="99" />
                             <button onclick="increaseQuantity()">+</button>
                         </div>
                         
                         <button class="add-to-cart-btn" onclick="addToCartFromModal()">
-                            <i data-feather="shopping-cart"></i>
-                            Add to Cart
+                            <i data-feather="shopping-cart"></i> Add to Cart
                         </button>
                         
                         <button class="buy-now-btn" onclick="buyNowFromModal()">
-                            <i data-feather="credit-card"></i>
-                            Buy Now
+                            <i data-feather="credit-card"></i> Buy Now
                         </button>
                         
                         <button class="favorite-modal-btn" onclick="toggleFavoriteModal()">
@@ -267,16 +222,7 @@
     <script src="https://unpkg.com/feather-icons"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-                console.log('✓ Feather icons loaded');
-            }
-        });
-        
-        window.addEventListener('load', function() {
-            if (typeof feather !== 'undefined') {
-                feather.replace();
-            }
+            if (typeof feather !== 'undefined') { feather.replace(); }
         });
     </script>
     <script src="{% static 'blog/lund.js' %}?v=999.0"></script>

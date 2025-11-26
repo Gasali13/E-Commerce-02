@@ -21,8 +21,35 @@ from .models import Order, OrderItem, Payment, Product
 # VIEWS HALAMAN UTAMA
 # ========================================
 
+# Pastikan Product sudah di-import di bagian paling atas file:
+# from .models import Order, OrderItem, Payment, Product
+
 def catalog_view(request):
-    return render(request, 'blog/catalog.html')
+    # 1. Ambil opsi sorting dari URL (misal: ?sort=price_low)
+    sort_by = request.GET.get('sort', 'relevance')
+    
+    # 2. Ambil semua data produk dari Database
+    products = Product.objects.all()
+    
+    # 3. Logika Sorting
+    if sort_by == 'price_low':
+        products = products.order_by('price')
+    elif sort_by == 'price_high':
+        products = products.order_by('-price')
+    elif sort_by == 'newest':
+        # Mengurutkan berdasarkan ID (produk terakhir diupload)
+        products = products.order_by('-id')
+    
+    # 4. Hitung jumlah produk untuk ditampilkan di header "Featured Products (X)"
+    product_count = products.count()
+
+    context = {
+        'products': products,
+        'product_count': product_count,
+        'current_sort': sort_by
+    }
+    
+    return render(request, 'blog/catalog.html', context)
 
 
 def cart_view(request):
