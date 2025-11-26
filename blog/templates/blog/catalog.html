@@ -141,14 +141,13 @@
                         <span class="current-price">IDR {{ product.price|floatformat:0 }}</span>
                     </div>
                 </div>
-            </div>
-                {% empty %}
+                </div> {% empty %}
                 <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
                     <h3>Belum ada produk yang tersedia saat ini.</h3>
                     <p>Silakan cek kembali nanti atau hubungi admin.</p>
                 </div>
                 {% endfor %}
-                </div>
+            </div>
 
             <div style="text-align: center; margin-top: 3rem;">
                 <a href="javascript:void(0)" class="btn btn-primary" style="display: inline-flex; padding: 14px 32px; text-decoration: none; font-size: 1.05rem;">
