@@ -71,7 +71,7 @@
                 <p class="hero-description">
                     Jelajahi koleksi gelang dan kalung premium kami, 
                     yang dirancang untuk bikin gaya harianmu makin on point.
-                     Temukan perpaduan tren kekinian dan gaya klasik yang elegan di sini.
+                    Temukan perpaduan tren kekinian dan gaya klasik yang elegan di sini.
                 </p>
             </div>
             <div class="hero-image"></div>
@@ -83,9 +83,9 @@
             <h2>About Threeofkind.supply</h2>
             <p>
                 Kenapa kami ada? Sederhana. Kamu capek cari aksesoris bagus yang nggak pasaran dan kualitasnya oke.
-                 Jadi, di tahun 2025 ini, kami putuskan buat bikin Threeofkind.supply.
-                  Kami menghadirkan gelang dan kalung untuk memastikan kamu cuma dapat yang terbaik desain keren, bahan awet, 
-                  dan pastinya, bikin kamu makin percaya diri.
+                Jadi, di tahun 2025 ini, kami putuskan buat bikin Threeofkind.supply.
+                Kami menghadirkan gelang dan kalung untuk memastikan kamu cuma dapat yang terbaik desain keren, bahan awet, 
+                dan pastinya, bikin kamu makin percaya diri.
             </p>
         </div>
     </section>
@@ -110,38 +110,38 @@
                 </div>
             </div>
 
-            <div class="products-grid">
-                {% for product in products %}
-                <div class="product-card" 
-                     data-product-id="{{ product.id }}" 
-                     onclick="openProductModal('{{ product.id }}')" 
-                     style="cursor: pointer;">
-                    
-                    <div class="product-image">
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}" />
-                        {% else %}
-                            <img src="https://via.placeholder.com/300x300?text=No+Image" alt="No Image" />
-                        {% endif %}
+            <div class="product-card" 
+                data-product-id="{{ product.id }}" 
+                data-name="{{ product.name }}"
+                data-price="{{ product.price|floatformat:0 }}"
+                data-image="{{ product.image.url }}"
+                data-description="{{ product.description|default:'Deskripsi produk belum tersedia.' }}"
+                onclick="openProductModal(this)" 
+                style="cursor: pointer;">
+    
+                <div class="product-image">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" />
+                    {% else %}
+                    <img src="https://via.placeholder.com/300x300?text=No+Image" alt="No Image" />
+                    {% endif %}
 
-                        {% if product.stock < 5 and product.stock > 0 %}
-                            <span class="product-badge badge-discount">Low Stock</span>
-                        {% elif product.price < 50000 %}
-                            <span class="product-badge badge-discount">Best Deal</span>
-                        {% endif %}
+                    {% if product.stock < 5 and product.stock > 0 %}
+                    <span class="product-badge badge-discount">Low Stock</span>
+                    {% endif %}
 
-                        <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this);">
-                            <i data-feather="heart"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="product-info">
-                        <h3 class="product-name">{{ product.name }}</h3>
-                        <div class="product-price">
-                            <span class="current-price">IDR {{ product.price|floatformat:0 }}</span>
-                        </div>
+                    <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this);">
+                        <i data-feather="heart"></i>
+                    </button>
+                </div>
+    
+                <div class="product-info">
+                    <h3 class="product-name">{{ product.name }}</h3>
+                    <div class="product-price">
+                        <span class="current-price">IDR {{ product.price|floatformat:0 }}</span>
                     </div>
                 </div>
+            </div>
                 {% empty %}
                 <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
                     <h3>Belum ada produk yang tersedia saat ini.</h3>
