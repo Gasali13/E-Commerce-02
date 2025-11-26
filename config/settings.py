@@ -118,31 +118,37 @@ USE_TZ = True
 
 
 # ========================================
-# STATIC FILES (CSS, JS) - Pakai Whitenoise
+# STATIC & MEDIA FILES (FORMAT BARU DJANGO 5)
 # ========================================
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-WHITENOISE_USE_FINDERS = True
-
-
-# ========================================
-# MEDIA FILES (GAMBAR) - Pakai Cloudinary
-# ========================================
-# Konfigurasi ini mengambil kunci dari Environment Variables Vercel
+# 1. Konfigurasi Kunci Cloudinary (TETAP DIPERLUKAN)
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
     'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
 }
 
-# Menyuruh Django menggunakan Cloudinary untuk penyimpanan file Media
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# 2. Format Baru 'STORAGES' (Wajib untuk Django 5+)
+# Ini menggantikan DEFAULT_FILE_STORAGE dan STATICFILES_STORAGE yang lama
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+    },
+}
+
+# URL & Root Path
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Opsi Whitenoise (Biar CSS tidak 404)
+WHITENOISE_USE_FINDERS = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -193,5 +199,3 @@ MIDTRANS_IS_PRODUCTION = True
 # KEY DIAMBIL DARI ENVIRONMENT VARIABLE
 MIDTRANS_SERVER_KEY = os.environ.get('MIDTRANS_SERVER_KEY')
 MIDTRANS_CLIENT_KEY = os.environ.get('MIDTRANS_CLIENT_KEY')
-
-# Pancing deploy ulang ke Vercel
