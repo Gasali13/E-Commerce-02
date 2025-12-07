@@ -913,7 +913,7 @@ function renderPaymentSummary() {
     itemsContainer.innerHTML = itemsHTML;
 
     const subtotal = getCartTotal();
-    const shipping = 10000; 
+    const shipping = 5; 
     const total = subtotal + shipping;
 
     const totalHTML = `
