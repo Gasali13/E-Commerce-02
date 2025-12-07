@@ -339,8 +339,8 @@ def payment_view(request):
     context = {
         'cart_items': [],
         'total': 0,
-        'shipping': 10000,
-        'grand_total': 10000
+        'shipping': 5,
+        'grand_total': 5
     }
     
     print(f"[PAYMENT VIEW] Rendering payment page")
@@ -412,7 +412,7 @@ def process_payment(request):
         return JsonResponse({'error': 'Tidak ada produk valid dalam cart'}, status=400)
     
     # Add shipping
-    shipping_cost = Decimal('10000')
+    shipping_cost = Decimal('5')
     total_with_shipping = total + shipping_cost
     
     # Create order
