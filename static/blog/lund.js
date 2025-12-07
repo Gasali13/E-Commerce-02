@@ -113,7 +113,7 @@ const productsData = {
         name: "Kalung Titanium Rantai Rolo Liontin Bulan Bintang Anti Karat dan Anti Luntur untuk Pria dan Wanita",
         image: "/static/blog/pict/necklace 2.jpg", 
         price: 5,
-        priceFormatted: "IDR 40.000",
+        priceFormatted: "IDR 5",
         originalPrice: "IDR 70.000",
         stock: 3,
         description: "Kalung fashion dengan rantai model rolo dan liontin bulan bintang. Terbuat dari titanium steel yang menjamin anti karat dan anti luntur. Desain elegan untuk pria dan wanita.",
