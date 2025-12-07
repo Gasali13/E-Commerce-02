@@ -438,7 +438,7 @@ function renderCart() {
     `).join('');
 
     const subtotal = getCartTotal();
-    const shipping = 10000;
+    const shipping = 5;
     const total = subtotal + shipping;
 
     cartContent.innerHTML = `
